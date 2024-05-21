@@ -1,25 +1,40 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { useState } from 'react';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import DogBreeds from './components/DogBreeds';
+import BreedDetails from './components/BreedDetails';
+import DogFacts from './components/DogFacts';
+import DogGroups from './components/DogGroups';
 
-function App() {
+const queryClient = new QueryClient();
+
+const App = () => {
+  const [selectedBreedId, setSelectedBreedId] = useState(null);
+  const [view, setView] = useState('breeds');
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <QueryClientProvider client={queryClient}>
+      <div>
+        <nav>
+          <button onClick={() => { setView('breeds'); setSelectedBreedId(null); }}>Breeds</button>
+          <button onClick={() => setView('facts')}>Facts</button>
+          <button onClick={() => setView('groups')}>Groups</button>
+        </nav>
+
+        {view === 'breeds' && (
+          <div>
+            {selectedBreedId ? (
+              <BreedDetails breedId={selectedBreedId} />
+            ) : (
+              <DogBreeds onSelectBreed={setSelectedBreedId} />
+            )}
+          </div>
+        )}
+        {view === 'facts' && <DogFacts />}
+        {view === 'groups' && <DogGroups />}
+      </div>
+    </QueryClientProvider>
   );
-}
+};
 
 export default App;
+
